@@ -5,47 +5,47 @@ import { PDFDocument, rgb } from 'pdf-lib';
 import InputAutoComplete from '@/src/inputs/AutoComplete';
 import { useForm } from "react-hook-form";
 
-const generatePDF = async (control) => {
+const buildDynamicForm = (form, control) => {
 
-  // Load an existing PDF with editable fields
-  const existingPdfBytes = await fetch('existing.pdf').then((res) => res.arrayBuffer());
-  const pdfDoc = await PDFDocument.load(existingPdfBytes);
-  const form = pdfDoc.getForm();
-  // console.log(form)
+  if (form) {
+    console.log(form)
 
-  // Set form field values from the form data
-  // form.getTextField('Name').setText(formData.name);
+    // Set form field values from the form data
+    // form.getTextField('Name').setText(formData.name);
 
-  const fields = form.getFields();
+    const fields = form.getFields();
 
-  for (const field of fields) {
-    console.log(`Editable field name: ${field.getName()}`);
+    for (const field of fields) {
+      console.log(`Editable field name: ${field.getName()}`);
 
-    const fieldType = field.constructor.name;
-    // console.log(`Field Type: ${fieldType}`);
+      const fieldType = field.constructor.name;
+      // console.log(`Field Type: ${fieldType}`);
 
-    // if (fieldType === "PDFDropdown") {
-    //   console.log(form.getDropdown(field.getName()).getOptions())
-    // }
+      // if (fieldType === "PDFDropdown") {
+      //   console.log(form.getDropdown(field.getName()).getOptions())
+      // }
 
-    if (fieldType === "PDFDropdown") {
-      const opt = form.getDropdown(field.getName()).getOptions()
-      return (
-        <InputAutoComplete
-          control={control}
-          name="test"
-          label="autocomplete"
-          // name={`scenarios.${index}.loanDurationInYears`}
-          // label={`${intl.formatMessage({ id: "calculators.form.sectionLoanInfo.inputs.loanDurationInYears" })}`}
-          rules={{ required: true }}
-          options={opt}
-        />
-      )
-      // return (form.getDropdown(field.getName()).getOptions())
+      if (fieldType === "PDFDropdown") {
+        const opt = form.getDropdown(field.getName()).getOptions()
+        return (
+          <InputAutoComplete
+            control={control}
+            name="test"
+            label="autocomplete"
+            // name={`scenarios.${index}.loanDurationInYears`}
+            // label={`${intl.formatMessage({ id: "calculators.form.sectionLoanInfo.inputs.loanDurationInYears" })}`}
+            rules={{ required: true }}
+            options={opt}
+          />
+        )
+        // return (form.getDropdown(field.getName()).getOptions())
+      }
+
+
     }
-
-
   }
+
+
 
   // Create a new PDF with the updated form fields
   // const pdfBytes = await pdfDoc.save();
@@ -57,6 +57,21 @@ const generatePDF = async (control) => {
   // window.open(url);
 };
 
+
+
+const loadPdf = async (setForm) => {
+
+  // Load an existing PDF with editable fields
+  const existingPdfBytes = await fetch('existing.pdf').then((res) => res.arrayBuffer());
+  const pdfDoc = await PDFDocument.load(existingPdfBytes);
+  const form = pdfDoc.getForm();
+  // console.log(form)
+
+  // return form
+  setForm(form)
+
+}
+
 function App() {
 
   const { handleSubmit, control, getValues, formState, setValue, setError } = useForm({
@@ -67,6 +82,7 @@ function App() {
   });
 
   const [state, setState] = useState([])
+  const [form, setForm] = useState()
   // const [formData, setFormData] = useState({ name: '' });
 
 
@@ -76,9 +92,17 @@ function App() {
   // };
 
   React.useEffect(() => {
-    setState(generatePDF(control))
-  }, []);
+    loadPdf(setForm)
+  }, [])
 
+  React.useEffect(() => {
+    // console.log(form)
+    setState(buildDynamicForm(form, control))
+  }, [control, form]);
+
+  // const onSubmit = async (data: any) => {
+  //   // console.log(data)
+  // };
 
   return (
     <>
