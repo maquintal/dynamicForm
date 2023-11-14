@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/pages/pdf/index.js", "src/pages/pdf/index.js", "src/pages/pdf/ContractDisplay.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "pages/src-pdf/index.js", "pages/src-pdf/index.js", "pages/src-pdf/ContractDisplay.jsx"],
   "exclude": ["node_modules"]
 }
