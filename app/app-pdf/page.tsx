@@ -92,12 +92,9 @@ const buildDynamicFormV3 = (interactivePdfForm: PDFForm, control: any) => {
       const fieldType = field.constructor.name;
       // console.log(`Field Type: ${fieldType}`);
 
-
       switch (true) {
         case /PDFDropdown/.test(fieldType):
-          console.log("kiki")
           const opt = interactivePdfForm.getDropdown(field.getName()).getOptions()
-          // return (
           rhfField = <InputAutoComplete
             control={control}
             name={`${field.getName()}`}
@@ -107,6 +104,7 @@ const buildDynamicFormV3 = (interactivePdfForm: PDFForm, control: any) => {
           />
 
           output.push(rhfField)
+          break;
 
         case /PDFTextField/.test(fieldType):
           rhfField = <InputTextField
@@ -115,39 +113,14 @@ const buildDynamicFormV3 = (interactivePdfForm: PDFForm, control: any) => {
             label={`${field.getName()}`}
             rules={{ required: true }}
           />
-          
+
           output.push(rhfField)
+          break;
 
         default:
           rhfField = <></>
+          break;
       }
-
-      // if (fieldType === "PDFDropdown") {
-      //   const opt = interactivePdfForm.getDropdown(field.getName()).getOptions()
-      //   const rhfField = (<InputAutoComplete
-      //     control={control}
-      //     name={`${field.getName()}`}
-      //     label={`${field.getName()}`}
-      //     rules={{ required: true }}
-      //     options={opt}
-      //   />
-      //   )
-
-      //   output.push(rhfField)
-      // }
-
-      // if (fieldType === "PDFTextField") {
-      //   const rhfField = (
-      //     <InputTextField
-      //       control={control}
-      //       name={`${field.getName()}`}
-      //       label={`${field.getName()}`}
-      //       rules={{ required: true }}
-      //     />
-      //   )
-
-      //   output.push(rhfField)
-      // }
 
     }
 
@@ -188,30 +161,7 @@ function App() {
   }, [])
 
   React.useEffect(() => {
-    // console.log(interactivePdfForm)
     // @ts-ignore
-    // setState(buildDynamicForm(interactivePdfForm, control))
-
-    // if (interactivePdfForm) {
-    //   const fields = interactivePdfForm.getFields();
-
-    //   for (const field of fields) {
-    //     console.log(`Editable field name: ${field.getName()}`);
-
-    //     const fieldType = field.constructor.name;
-    //     console.log(`Field Type: ${fieldType}`);
-
-    //     // Updating state using the spread operator
-    //     const val = buildDynamicFormV2(interactivePdfForm, field, control)
-    //     console.log(val)
-    //     console.log(JSON.stringify(val))
-    //     setState(state => ({
-    //       ...state,  // Spread the previous state
-    //       val
-    //     }));
-    //   }
-    // }
-
     setState(buildDynamicFormV3(interactivePdfForm, control))
   }, [control, interactivePdfForm]);
 
@@ -242,8 +192,15 @@ function App() {
       Object.entries(formData).forEach(([key, value]) => {
         // form.getTextField(key).setValue(value) // .setText(value);
         // form.getDropdown(key).select(value)
-        const dropdownField = interactivePdfForm.getField(key);
-        dropdownField.select(value);
+        const filledField = interactivePdfForm.getField(key);
+        console.log(filledField.constructor.name)
+
+        if (filledField.constructor.name === "PDFDropdown") {
+          filledField.select(value)
+        } else {
+          filledField.setText(value)
+        }
+
       });
 
       generatePDF(pdfDoc)
