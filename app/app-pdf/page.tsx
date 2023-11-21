@@ -133,8 +133,11 @@ const loadPdf = async (setInteractivePdfForm: any, setPdfDoc: any) => {
 
   // Load an existing PDF with editable fields
   const existingPdfBytes = await fetch('existing.pdf').then((res) => res.arrayBuffer());
+  console.log(`136`, existingPdfBytes)
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
+  console.log('138', pdfDoc);
   const form = pdfDoc.getForm();
+  console.log('140', form)
   // console.log(form)
   // console.log(pdfDoc)
 
