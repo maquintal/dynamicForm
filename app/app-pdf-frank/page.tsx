@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, {Fragment, useState} from 'react';
 import { PDFAcroForm, PDFButton, PDFCheckBox, PDFDocument, PDFDropdown, PDFField, PDFFont, PDFForm, PDFOptionList, PDFRadioGroup, PDFRef, PDFSignature, PDFTextField, rgb } from 'pdf-lib';
 import InputAutoComplete from '@/src/inputs/AutoComplete';
 import { useForm } from "react-hook-form";
 import { Button } from '@mui/material';
 import { FlattenOptions } from 'pdf-lib/cjs/api/form/PDFForm';
 import InputTextField from '@/src/inputs/TextField';
+import styles from "@/app/page.module.css";
 
 const buildDynamicFormV3 = (interactivePdfForm: PDFForm, control: any) => {
 
@@ -64,7 +65,6 @@ const buildDynamicFormV3 = (interactivePdfForm: PDFForm, control: any) => {
 const loadPdf = async (file: any, setInteractivePdfForm: any, setPdfDoc: any) => {
     const pdfDoc = await PDFDocument.load(file);
     const form = pdfDoc.getForm();
-
     // return form
     setInteractivePdfForm(form)
     setPdfDoc(pdfDoc)
@@ -124,14 +124,13 @@ function AppFrank() {
     }
 
     React.useEffect(() => {
-
         if (Object.keys(formData).length !== 0 && interactivePdfForm !== null && interactivePdfForm && pdfDoc) {
             // Set form field values from the form data
             Object.entries(formData).forEach(([key, value]) => {
                 // form.getTextField(key).setValue(value) // .setText(value);
                 // form.getDropdown(key).select(value)
                 const filledField = interactivePdfForm.getField(key);
-                console.log(filledField.constructor.name)
+                console.log('135', filledField.constructor.name)
 
                 if (filledField.constructor.name === "PDFDropdown") {
                     filledField.select(value)
@@ -152,7 +151,7 @@ function AppFrank() {
     };
 
     return (
-        <>
+        <div style={{height: '100%', minHeight: '100vh', backgroundColor: '#fff'}}>
             <label htmlFor="upload-photo">
                 <input
                     style={{ display: 'none' }}
@@ -174,7 +173,7 @@ function AppFrank() {
                     {JSON.stringify(formData)}
                 </form>
             )}
-        </>
+        </div>
     );
 }
 
